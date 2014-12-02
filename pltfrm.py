@@ -2,6 +2,7 @@ import pygame, sys
 from pygame.locals import *
 import math
 import pytimeutil
+import random
 
 class MySprite(pygame.sprite.Sprite):
     def __init__(self, target):
@@ -133,6 +134,19 @@ class Level:
         self.trackspeedY = 10
         self.track_sensitivityX = 15
         self.track_sensitivityY = 25
+        
+        self.camshakemaxX = 10 #The maximum amount of camera shake in the X direction
+        self.camshakemaxY = 10 #The maximum amount of camera shake in the Y direction
+        self.earthquake = False #Does the camera need to shake yet?
+        self.shakestep = 0 #What step the camera is in a shaking procedure (moving forward, moving back, moving back to home position?)
+        self.startedshaking = 0 #Time at which shaking started--timing purposes
+        
+        
+        self.camshakeX = 0 #The camera's current position when shaking
+        self.camshakeY = 0
+
+
+        
         self.manualcam = True
 
         self.respawning = True
@@ -175,10 +189,12 @@ class Level:
         self.ticks = pygame.time.get_ticks()
 
     def run(self):
+
+
         self.surf.fill(self.WHITE)
         mouse = pygame.mouse.get_pos()
 
-		########################################################################################################################################################################################
+	########################################################################################################################################################################################
         #Movement and Animation
         ########################################################################################################################################################################################
 
@@ -209,7 +225,9 @@ class Level:
             self.pos = (mouse[0] + self.camera[0], mouse[1] + self.camera[1])
             self.vel = (0, 0)
 
-
+        if pygame.mouse.get_pressed() == (0, 0, 1):
+            self.earthquake = True
+            
         if not self.manualcam:
             if self.player.centerx > (self.resX/2) + self.track_sensitivityX: #Tracks self.camera to self.player's X coordinate until it centers. Then, it stops the self.camera.
                 self.movecameraX = 1
@@ -222,7 +240,7 @@ class Level:
                 
             self.trackspeedX = (abs(self.player.centerx - (self.resX/2)) - self.track_sensitivityX) / 10
 
-            if self.player.centery > (self.resY/2) + self.track_sensitivityY: #Tracks self.camera to self.player's X coordinate until it centers. Then, it stops the self.camera.
+            if self.player.centery > (self.resY/2) + self.track_sensitivityY: #Tracks self.camera to self.player's Y coordinate until it centers. Then, it stops the self.camera.
                 self.movecameraY = 1
                 
             elif self.player.centery < (self.resY/2) - self.track_sensitivityY:
@@ -245,6 +263,33 @@ class Level:
             self.camera = (self.camera[0], 0)
 
 
+
+        ########################################################################################################################################################################################
+        #Camera Shaking "gizmo"
+        ########################################################################################################################################################################################
+
+
+
+        if self.earthquake and self.shakestep == 0:
+            self.earthquake = False
+            self.startedshaking = self.gametime.give() #Gets time when shaking was called to start
+            self.shakestep = 1
+
+        if self.shakestep == 1 or (self.shakestep == 3 and abs(self.gametime.give() - self.startedshaking) >= 0.02):
+            self.camshakeX = self.camshakemaxX * ((random.randint(0, 1) * 2) - 1) #RNG either gives out a 1 or -1; causes the camera shake to either be positive or negative
+            self.camshakeY = self.camshakemaxY * ((random.randint(0, 1) * 2) - 1)
+            self.shakestep += 1
+            
+        if self.shakestep == 2 and abs(self.gametime.give() - self.startedshaking) >= 0.01 or (self.shakestep == 4 and abs(self.gametime.give() - self.startedshaking) >= 0.03):
+            self.camshakeX = 0
+            self.camshakeY = 0
+            if self.shakestep == 2:
+                self.shakestep += 1
+            elif self.shakestep == 4:
+                self.shakestep = 0
+
+
+        self.camera = (self.camera[0] + self.camshakeX, self.camera[1] + self.camshakeY)
 
         ########################################################################################################################################################################################
         #Death and Respawning Animation
