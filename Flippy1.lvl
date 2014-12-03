@@ -1,5 +1,5 @@
 #Sample data for testing the level importer
-title: Flippy the Penguin
+title: Flippy_the_Penguin
 #This is a comment tag.
 #type x-coord y-coord(from bottom of screen) width height
 plt : 0; 25; 9999; 9999
@@ -7,4 +7,23 @@ plt: 400;200;200;25
 plt:1000; 500; 200; 25
 
 kill :801; 400; 200; 1000
-palette: somespritesheet.png
+
+<sprite>
+obj: player
+using: somespritesheet.png
+DEAD: 0
+HIT-R: 5
+HIT-L: 10
+JUMPING: 15
+FALLING: 20
+CROUCH-R: 25
+CROUCH-L: 30
+RUNNING-R: 35; 39
+RUNNING-L: 40; 44
+DEC-R: 45; 49
+DEC-L: 50; 54
+PUSH-R: 55; 59
+PUSH-L: 60; 64
+ST-R: 65; 69
+ST-L: 70; 74
+</sprite>

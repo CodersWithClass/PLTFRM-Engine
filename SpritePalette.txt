@@ -1,0 +1,17 @@
+obj: player
+using: somespritesheet.png
+DEAD: (0)
+HIT-R: (5)
+HIT-L: (10)
+JUMPING: (15)
+FALLING: (20)
+CROUCH-R: (25)
+CROUCH-L: (30)
+RUNNING-R: (35, 39)
+RUNNING-L: (40, 44)
+DEC-R: (45, 49)
+DEC-L: (50, 54)
+PUSH-R: (55, 59)
+PUSH-L: (60, 64)
+ST-R: (65, 69)
+ST-L: (70, 74)
