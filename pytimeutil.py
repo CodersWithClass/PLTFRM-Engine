@@ -1,12 +1,6 @@
 #This module REQUIRES Pygame to work! Please import it beforehand!
 import pygame, sys
 from pygame.locals import *
-pygame.init()
-resX = 700
-resY = 700
-SCREEN = pygame.display.set_mode((resX, resY))
-pygame.display.set_caption('Caption Goes Here')
-WHITE = (255, 255, 255)
 clock = pygame.time.Clock()
 class Timer:
     def __init__(self, framerate):
@@ -27,7 +21,7 @@ class Timer:
         self.real_fps = round(self.clock.get_fps(),1)
         self.totalfps += self.real_fps
 
-        if self.fpscount >= self.framebuffer and self.framebuffer != -1:
+        if self.fpscount >= self.framebuffer and self.framebuffer != 10:
             self.fpscount = 0
             self.totalfps = 0
             

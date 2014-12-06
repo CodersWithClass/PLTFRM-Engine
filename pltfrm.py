@@ -96,6 +96,10 @@ class Level:
         #self.objlist.append((800, 300, 200, 25, 'plt'))
 
         self.objlist.append((801, self.resY - 400, 200, 1000, 'kill'))
+        
+        self.objlist.append((1500, self.resY - 75, 50, 50, 'chk', False)) #Coordinates of a checkpoint, and whether or not it's been passed already.
+        
+        self.objlist.append((2000, self.resY - 75, 50, 50, 'chk', False)) #Coordinates of a checkpoint, and whether or not it's been passed already.
 
         self.kickback = 12 #How far the self.player jumps back after being self.hit by an obstacle
 
@@ -161,6 +165,7 @@ class Level:
         self.vulnerable = True
         self.neverleft = False #If you self.hit an obstacle and you don't leave, the counter still goes down.
         self.whenhit = 0
+        self.spawnAt = (0, 0)
 
         self.lvl_name = 'Level -1: Test Level'
 
@@ -189,8 +194,8 @@ class Level:
         self.ticks = pygame.time.get_ticks()
 
     def run(self):
-
-
+        
+        
         self.surf.fill(self.WHITE)
         mouse = pygame.mouse.get_pos()
 
@@ -299,7 +304,7 @@ class Level:
 
         if not self.alive: #Resets level to beginning
             if self.trans >= -self.resY and self.trans < -self.resY + 50:
-                self.pos = (0, 0)
+                self.pos = (self.spawnAt[0], self.spawnAt[1] - 100)
                 self.player.topleft = (0, 0)
                 self.camera = (0, 0)
                 self.movecameraX = 0
@@ -366,7 +371,8 @@ class Level:
         bottombound = self.resY
         if self.dbg_mode:
             pygame.draw.rect(self.surf, (0, 255, 0), (leftbound, topbound, rightbound-leftbound, bottombound-topbound), 3)
-        for obj in self.objlist:
+        for num in range(0, len(self.objlist)):
+            obj = self.objlist[num]
             visible = False #Boolean for whether or not objects are drawn if they are within the boundaries
             if ((((obj[0] - self.camera[0]) >=  leftbound and (obj[0] - self.camera[0]) <= rightbound) or
                 ((obj[0] - self.camera[0] + obj[2]) >= leftbound and (obj[0] - self.camera[0] + obj[2]) <= rightbound) or
@@ -413,7 +419,22 @@ class Level:
                         self.hit = False
                         
                 self.jumping = self.collidingwith == 0
+                
+    #Passing a Checkpoint ########################################################################################################################################################################################
+            if obj[4] == 'chk':
+                checkpoint = pygame.Rect(obj[0] - self.camera[0], obj[1] - self.camera[1], obj[2], obj[3])
+                if visible:
+                    if obj[5]:#Activated chekckpoint
+                        pygame.draw.rect(self.surf, (0, 255, 0), checkpoint, 0)
+                        if obj[0] > self.spawnAt[0]:
+                            self.spawnAt = (obj[0], obj[1])
+                    elif not obj[5]:#inactive checkpoint
+                        pygame.draw.rect(self.surf, (0, 128, 0), checkpoint, 0)
 
+                if checkpoint.colliderect(self.player):
+                    temp = list(self.objlist[num])
+                    temp[5] = True
+                    self.objlist[num] = tuple(temp)
             
     #Collision with dangerous obstacle (i.e. spikes, freezing-cold water, etc... ########################################################################################################################################################################################
             if obj[4] == 'kill':
@@ -675,12 +696,28 @@ class Level:
         pygame.display.update()
         self.gametime.adv()
         
-
 SCREEN = pygame.display.set_mode((800, 700))
 pygame.display.set_caption('Flippy The Penguin')
 myGame = Level(SCREEN)
+paused = False
 while True:
-    myGame.run()
+    buttons = pygame.mouse.get_pressed()
+    
+    if buttons != (0, 0, 0):
+        paused = True
+    else:
+        paused = False
+        
+    if paused:
+
+        pygame.display.update()
+        if pygame.event.peek(QUIT):
+                pygame.quit()
+                sys.exit()
+                
+    if not paused:
+        myGame.run()
+    
 
 
 

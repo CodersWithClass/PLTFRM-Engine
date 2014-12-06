@@ -14,10 +14,8 @@ for lines in level:
         
       #  lines[0] = re.sub(r'\s', '', lines[0])    
                       
-             
-        if lines[0] != '':
+        if lines[0] != '': #Adds everything except empty lists
             active_objects.append(lines)
-
         
 
 for lines in active_objects:
@@ -27,7 +25,7 @@ for lines in active_objects:
                     lines[1][num] = int(lines[1][num])
                     
                 except ValueError:
-                    print("Not an int")
+                    pass
 
                     
     print(lines)
