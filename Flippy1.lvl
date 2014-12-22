@@ -1,28 +1,42 @@
 #Sample data for testing the level importer
+<head>
 title: Flippy_the_Penguin
 
 #Background with dimensions 320x240 pixels
 back: background.png; 320; 240
 
 music: some_song.ogg
-
+</head>
 
 #This is a comment tag.
 #type x-coord y-coord(from bottom of screen) width height
-plt : 0; 25; 9999; 9999
-plt: 400;200;200;25
-plt:1000; 500; 200; 25
 
-kill :801; 400; 200; 1000
+<objects>
+	plt : 0; 25; 9999; 9999
+	plt: 400;200;200;25
+	plt:1000; 500; 200; 25
 
+	kill :801; 400; 200; 1000
+</objects>
 
+<plt>
+	fric: 0.98
+	damage: False; False; False; False
+	bounce: False; False; False; False
+</plt>
+
+<kill>
+	fric: 0.98
+	damage: True; True; True; True
+	bounce: False; False; False; False
+</kill>
 #player attributes go under the <player> tag
 
 <player>
 	coord: 0; 0
 	using: playerspritesheet.png
 	
-	#Update rate of sprite sheet in milliseconds 
+#Update rate of sprite sheet in milliseconds 
 	tick: 100
 
 	<spritesheet>

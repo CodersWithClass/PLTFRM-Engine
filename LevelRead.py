@@ -2,6 +2,9 @@ level = open('Flippy1.lvl') #Reads from .lvl file
 active_objects = [] #Active objects are level commands that aren't comments or blank.
 object_list = []#List of processed items ready for import to the PLTFRM engine
 import re
+filtered_level = [] #Result of basic symbolic parsing
+final_level = [] #Final result of tag/advanced parsing
+tag = [] #Lists of tags encountered in the order encountered
 for lines in level:
     if lines[0] != '' and lines[0] != '#':
         
@@ -27,9 +30,27 @@ for lines in active_objects:
                 except ValueError:
                     pass
 
-                    
-    print(lines)
+
+    filtered_level.append(lines)
     
+for lines in filtered_level:
+    
+    if lines[0][0] == '<' and lines[0][1] == '/' and lines[0][-1] == '>':
+        print("EndTag: " + lines[0][2:-1])
+        if lines[0][2:-1] == tag[-1]:
+            del(tag[-1])
+        else:
+            print("Tag mismatch!")
+        
+    elif lines[0][0] == '<' and lines[0][-1] == '>':
+        print("StartTag: " + lines[0][1:-1])
+        tag.append(lines[0][1:-1])
+    else:
+        for items in tag:
+            print(items + ": ")
+        print(lines)
+        
+
     #===========================================================================
     # if len(lines[1]) > 1:
     #     for num in range(0, len(lines[1])): #Removes leading spaces in data entries
